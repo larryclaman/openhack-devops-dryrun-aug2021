@@ -127,7 +127,7 @@ jobs:
     - name: Create Dockerfile
       run: |
         cat >Dockerfile <<EOF
-        FROM microsoft/dotnet:2.1-aspnetcore-runtime as final
+        FROM mcr.microsoft.com/dotnet/aspnet:2.1 
         WORKDIR /app
 
         ENV SQL_USER="YourUserName" \
