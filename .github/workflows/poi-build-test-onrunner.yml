@@ -75,9 +75,9 @@ jobs:
       - run: |
           pwd
           ls -l 
-      - name: Add Code Coverage Tools
-        working-directory: tests/UnitTests
-        run: dotnet add package coverlet.msbuild
+  #    - name: Add Code Coverage Tools
+  #      working-directory: tests/UnitTests
+  #      run: dotnet add package coverlet.msbuild
       - name: Install dependencies
         run: dotnet restore web/*.csproj
 
