@@ -147,9 +147,10 @@ jobs:
         pwd
         ls -l 
         cat Dockerfile
+        echo ${{github.run_number}}
 
     - run: |
-        docker build -t $acrsite/$repo:${{github.run_number}} --build-arg build_version=${{github.run_number}} .
+        docker build -t $acrsite/$repo:${{github.run_number}} --build-arg build_version=${{github.run_number}} .
         docker images
 
   Deploy:
