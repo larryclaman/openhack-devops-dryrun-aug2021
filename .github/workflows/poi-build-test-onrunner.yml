@@ -88,15 +88,18 @@ jobs:
         run: dotnet build --configuration Release tests/UnitTests/UnitTests.csproj
 
       - name: .NET Test
-        run: dotnet test --no-restore --verbosity normal apis/poi/tests/UnitTests  /p:CollectCoverage=true /p:CoverletOutput=lcov/ /p:CoverletOutputFormat=lcov
+        run: |
+          dotnet test --no-restore --verbosity normal tests/UnitTests --logger:console
+           #   /p:CollectCoverage=true /p:CoverletOutput=lcov/ /p:CoverletOutputFormat=lcov \
+           #   --logger:trx
 
-      - name: Coveralls
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          path-to-lcov: tests/UnitTests/lcov/coverage.info
-          base-path: .
-          flag-name: Unit
+    #  - name: Coveralls
+     #   uses: coverallsapp/github-action@master
+     #   with:
+     #     github-token: ${{ secrets.GITHUB_TOKEN }}
+     #     path-to-lcov: tests/UnitTests/lcov/coverage.info
+     #     base-path: .
+     #     flag-name: Unit
 
 
       - name: create issue if build & test failed
