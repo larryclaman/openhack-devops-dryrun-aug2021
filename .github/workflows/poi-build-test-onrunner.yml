@@ -72,7 +72,9 @@ jobs:
       # - name: showcache
       #   run: dotnet nuget locals all -l
 
-      - run: pwd
+      - run: |
+          pwd
+          ls -l 
       - name: Add Code Coverage Tools
         working-directory: tests/UnitTests
         run: dotnet add package coverlet.msbuild
