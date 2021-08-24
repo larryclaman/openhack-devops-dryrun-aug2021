@@ -10,8 +10,8 @@ env:
   AZURE_WEBAPP_NAME: openhack67r2z5h4poi   # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.' 
   artifact-name:  poiapp
-  # dotnetversion:  '2.1.x'
-  dotnetversion: '3.1.202'
+  dotnetversion:  '2.1.x'
+  #dotnetversion: '3.1.202'
 
 on:
   workflow_dispatch:
