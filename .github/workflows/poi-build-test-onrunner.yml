@@ -107,7 +107,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.artifact-name}}
-          path: 'apis/poi/web/poiapp' # or path/to/artifact
+          path: 'apis/poi/poiapp' # or path/to/artifact
 
       - name: create issue if build & test failed
         if: failure()
