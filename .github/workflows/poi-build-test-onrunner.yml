@@ -1,4 +1,4 @@
-name: BuildPoiNative
+name: Poi-Build-Runner
 
 env:
   apiname: poi
