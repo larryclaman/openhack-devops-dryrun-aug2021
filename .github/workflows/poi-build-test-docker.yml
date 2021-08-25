@@ -26,8 +26,6 @@ on:
       - apis/poi/**
       - .github/workflows/poi-build-native.yml
 
-
-
 jobs:
   build_and_test_poi_docker:
     runs-on: ubuntu-latest
@@ -36,7 +34,6 @@ jobs:
         working-directory: apis/poi
 
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v2
 
       - name: Build docker image 
@@ -64,8 +61,6 @@ jobs:
           Build Log: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }} 
           SHA: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})"
           gh issue create --title "$title" --body "$body"
-
-  
 
   Deploy:
     if: github.ref == 'refs/heads/master'
