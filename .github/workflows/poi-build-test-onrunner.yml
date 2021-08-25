@@ -96,6 +96,13 @@ jobs:
       - name: .NET Publish
         run: dotnet publish -c Release --no-restore web/poi.csproj -o poiapp
 
+      - run: |
+          pwd
+          echo
+          ls -l
+          echo
+          ls -l poiapp
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
