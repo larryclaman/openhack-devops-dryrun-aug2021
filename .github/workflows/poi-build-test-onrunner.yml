@@ -223,7 +223,6 @@ jobs:
     needs:   Deploy
     steps: 
 
-
     - uses: azure/login@v1
       name: Azure Login
       with:
