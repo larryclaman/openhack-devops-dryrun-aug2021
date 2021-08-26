@@ -40,6 +40,16 @@ jobs:
         run: |
           docker build -t $acrsite/$repo:${{github.run_number}} --build-arg build_version=${{github.run_number}} -f Dockerfile-poi .
 
+
+      - name: Container image scan
+        uses: Azure/container-scan@v0.1
+        with:
+          image-name: ${{env.acrsite}}/${{env.repo}}:${{github.run_number}}
+          # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
+          severity-threshold: CRITICAL # optional, default is HIGH
+
+
+
       - uses: azure/login@v1
         name: Azure Login
         with:

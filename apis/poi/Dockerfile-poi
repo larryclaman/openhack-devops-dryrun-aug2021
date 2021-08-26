@@ -28,6 +28,8 @@ COPY web/appsettings.json /app/poiapp/
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
 WORKDIR /app
 
+RUN apt update && apt upgrade -y
+
 # docker build argument
 #    This can be specified during the docker build step by adding " --build-arg build_version=<value>"
 #    App version can be accessed via the uri path /api/version/poi
