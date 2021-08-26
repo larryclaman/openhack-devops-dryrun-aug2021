@@ -1,0 +1,51 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build-env
+WORKDIR /app/web
+
+# copy csproj and restore as distinct layers
+COPY web/*.csproj .
+WORKDIR /app
+RUN dotnet restore web/*.csproj
+
+# copy everything else and build
+COPY . ./
+RUN dotnet build --configuration Release --no-restore web/*.csproj
+
+# build and run unit tests
+RUN dotnet build --configuration Release tests/UnitTests/UnitTests.csproj
+RUN dotnet test --no-restore --verbosity normal tests/UnitTests --logger:console
+   
+# publish 
+RUN dotnet publish -c Release --no-restore web/poi.csproj -o poiapp
+COPY web/appsettings.*.json /app/poiapp/
+COPY web/appsettings.json /app/poiapp/
+
+
+#RUN dotnet publish -c Release -o out
+#COPY ./appsettings.*.json /app/out/
+#COPY ./appsettings.json /app/out/
+
+# build runtime image
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.1
+WORKDIR /app
+
+# docker build argument
+#    This can be specified during the docker build step by adding " --build-arg build_version=<value>"
+#    App version can be accessed via the uri path /api/version/poi
+#    https://vsupalov.com/docker-build-pass-environment-variables/
+ARG build_version="poi default"
+
+ENV SQL_USER="YourUserName" \
+SQL_PASSWORD="changeme" \
+SQL_SERVER="changeme.database.windows.net" \
+SQL_DBNAME="mydrivingDB" \
+WEB_PORT="8080" \
+WEB_SERVER_BASE_URI="http://0.0.0.0" \
+ASPNETCORE_ENVIRONMENT="Production" \
+APP_VERSION=$build_version 
+
+COPY --from=build-env /app/poiapp .
+
+EXPOSE 8080
+
+ENTRYPOINT ["dotnet", "poi.dll"]
+

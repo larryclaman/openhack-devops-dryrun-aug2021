@@ -1,4 +1,4 @@
-name: BuildPoiNative
+name: Poi-Build-Runner
 
 env:
   apiname: poi
@@ -6,12 +6,12 @@ env:
   acrreg: openhack67r2z5h4acr
   acrsite: openhack67r2z5h4acr.azurecr.io
   tenant: ${{ secrets.tenant }}
-  RG: openhack67r2z5h4rg
   AZURE_WEBAPP_NAME: openhack67r2z5h4poi   # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.' 
   artifact-name:  poiapp
-  dotnetversion:  '2.1.x'
-  #dotnetversion: '3.1.202' # this doesn't work with the build
+  #dotnetversion:  '2.1.x'
+  dotnetversion: '3.1.202' # use with revison
+  RG: openhack67r2z5h4rg
 
 on:
   workflow_dispatch:
@@ -96,11 +96,18 @@ jobs:
       - name: .NET Publish
         run: dotnet publish -c Release --no-restore web/poi.csproj -o poiapp
 
+      - run: |
+          pwd
+          echo
+          ls -l
+          echo
+          ls -l poiapp
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.artifact-name}}
-          path: 'apis/poi/web/poiapp' # or path/to/artifact
+          path: 'apis/poi/poiapp' # or path/to/artifact
 
       - name: create issue if build & test failed
         if: failure()
@@ -143,34 +150,26 @@ jobs:
         ENTRYPOINT ["dotnet", "poi.dll"]
         EOF
 
-    - run: |
-        pwd
-        ls -l 
-        cat Dockerfile
-        echo ${{github.run_number}}
-
-    - run: |
+    - name: Build docker image using artifact
+      run: |
         docker build -t $acrsite/$repo:${{github.run_number}} .
         docker images
+
+    - uses: azure/login@v1
+      name: Azure Login
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }} 
+
+    - name: Push image to registry
+      run: |
+        az acr login -n ${{env.acrreg}}
+        docker push $acrsite/$repo:${{github.run_number}}
 
   Deploy:
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     needs:   BuildDocker
     steps:     
-
-    - run: exit
-    # - uses: actions/checkout@v2
-
-    - uses: actions/download-artifact@v2
-      with:
-        name: ${{ env.artifact-name}}
-        path: poiapp
-
-
-    - run: |
-        ls -l  
-        ls -l poiapp 
 
 
     # azure/login requires a GH Secret named AZURE_CREDENTIALS
@@ -201,8 +200,8 @@ jobs:
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        package: poiapp
-    #    # slot-name: staging
+        images: $acrsite/$repo:${{github.run_number}}
+        slot-name: staging
       
     - name: create issue if deploy fails
       if: failure()
@@ -216,10 +215,24 @@ jobs:
         SHA: [${{ github.sha }}](https://github.com/${{ github.repository }}/commit/${{ github.sha }})"
         gh issue create --title "$title" --body "$body"       
 
-    # - name: Swap Slots
-    #   run: >
-    #     az webapp deployment slot swap -g ${{env.RG}} -n ${{ env.AZURE_WEBAPP_NAME }} 
-    #     --slot staging  --target-slot production
+
+  Swap:
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+    environment: swap
+    needs:   Deploy
+    steps: 
+
+
+    - uses: azure/login@v1
+      name: Azure Login
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }} 
+
+    - name: Swap Slots
+      run: >
+        az webapp deployment slot swap -g ${{env.RG}} -n ${{ env.AZURE_WEBAPP_NAME }} 
+        --slot staging  --target-slot production
 
 
     
