@@ -152,7 +152,7 @@ jobs:
 
     - name: Build docker image using artifact
       run: |
-        docker build -t $acrsite/$repo:${{github.run_number}} .
+        docker build -t $acrsite/$repo:${{github.run_number}} --build-arg build_version=${{github.run_number}} .
         docker images
 
     - uses: azure/login@v1
