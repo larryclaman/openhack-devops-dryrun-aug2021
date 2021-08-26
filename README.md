@@ -1,3 +1,7 @@
+![poi-build-docker](https://github.com/larryclaman/openhack-devops-dryrun-aug2021/actions/workflows/poi-build-test-docker.yml/badge.svg)
+
+
+
 # My Driving Team APIs
 
 The DevOps open hack event is designed to foster learning via implementing DevOps practices with a series of challenges.
