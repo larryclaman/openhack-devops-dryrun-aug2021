@@ -28,7 +28,7 @@ on:
 
 jobs:
   build_and_test_poi_docker:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     defaults:
       run:
         working-directory: apis/poi
@@ -97,7 +97,7 @@ jobs:
       uses: azure/webapps-deploy@v2
       with: 
         app-name: ${{ env.AZURE_WEBAPP_NAME }}
-        images: $acrsite/$repo:${{github.run_number}}
+        images: ${{env.acrsite}}/${{env.repo}}:${{github.run_number}}
         slot-name: staging
       
     - name: create issue if deploy fails
