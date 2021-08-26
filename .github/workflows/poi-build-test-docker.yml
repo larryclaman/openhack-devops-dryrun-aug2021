@@ -38,7 +38,7 @@ jobs:
 
       - name: Build docker image 
         run: |
-          docker build -t $acrsite/$repo:${{github.run_number}} -f Dockerfiile-poi .
+          docker build -t $acrsite/$repo:${{github.run_number}} -f Dockerfile-poi .
 
       - uses: azure/login@v1
         name: Azure Login
