@@ -19,7 +19,7 @@ on:
     branches: [ '*' ]
     paths: 
       - apis/poi/**  
-      - .github/workflows/poi-build-test-onrunner.yml
+      - .github/workflows/poi-build-test-docker.yml
   pull_request:
     branches: [ master ]
     paths: 
