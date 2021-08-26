@@ -43,7 +43,7 @@ jobs:
       - name: Container image scan
         uses: Azure/container-scan@v0.1
         with:
-          image-name: $acrsite/$repo:${{github.run_number}}
+          image-name: ${{env.acrsite}}/${{env.repo}}:${{github.run_number}}
           # Minimum severities of vulnerabilities to be displayed (UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL)
           # severity-threshold: # optional, default is HIGH
 
