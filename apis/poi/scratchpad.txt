@@ -1,0 +1,24 @@
+/repos/{owner}/{repo}/actions/runs/{run_id}/pending_deployments
+
+gh api /repos/larryclaman/openhack-devops-dryrun-aug2021/actions/runs/18/pending_deployments
+
+cat runs.json |jq '.workflow_runs[] |  select(.status=="waiting")'
+cat runs.json |jq '.workflow_runs[] | {id: .id, runnumber: .run_number, status: .status}| select(.status=="waiting")'
+
+body='{"environment_ids":[42],"state":"state","comment":"comment"}'
+gh api /repos/larryclaman/openhack-devops-dryrun-aug2021/actions/runs/12536987/pending_deployments
+
+1.  find pending runs:
+    cat runs.json |jq '.workflow_runs[] |  select(.status=="waiting")'
+2. for each id that is waiting, find the pending env:
+    gh api  /repos/larryclaman/openhack-devops-dryrun-aug2021/actions/runs/1171783436/pending_deployments
+        find list of env id's
+                        [
+                {
+                    "environment": {
+                    "id": 289503964,
+                    "node_id": "MDExOkVudmlyb25tZW50Mjg5NTAzOTY0",
+                    "name": "swap",
+                    "url": "https://api.github.com/repos/larryclaman/openhack-devops-dryrun-aug2021/environments/swap",
+                    "html_url": "https://github.com/larryclaman/openhack-devops-dryrun-aug2021/deployments/activity_log?environments_filter=swap"
+                    },

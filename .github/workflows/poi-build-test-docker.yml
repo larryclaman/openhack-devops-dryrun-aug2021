@@ -12,6 +12,7 @@ env:
   #dotnetversion:  '2.1.x'
   dotnetversion: '3.1.202' # use with revison
   RG: openhack67r2z5h4rg
+  Dockerfile:  Dockerfile-poi 
 
 on:
   workflow_dispatch:
@@ -34,11 +35,27 @@ jobs:
         working-directory: apis/poi
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2  
 
-      - name: Build docker image 
-        run: |
-          docker build -t $acrsite/$repo:${{github.run_number}} --build-arg build_version=${{github.run_number}} -f Dockerfile-poi .
+      # - name: Build docker image 
+      #   run: |
+      #     docker build -t $acrsite/$repo:${{github.run_number}} --build-arg build_version=${{github.run_number}} -f Dockerfile-poi .
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - uses: azure/login@v1
+        name: Azure Login
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }} 
+
+      - name: Docker Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: apis/poi 
+          file: apis/poi/${{env.Dockerfile}}
+          push: true
+          tags: ${{env.acrsite}}/${{env.repo}}:${{github.run_number}}
+          build-args: build_version=${{github.run_number}}
 
 
       # - name: Container image scan
@@ -50,15 +67,10 @@ jobs:
 
 
 
-      - uses: azure/login@v1
-        name: Azure Login
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }} 
-
-      - name: Push Docker image to registry
-        run: |
-          az acr login -n ${{env.acrreg}}
-          docker push $acrsite/$repo:${{github.run_number}}
+      # - name: Push Docker image to registry
+      #   run: |
+      #     az acr login -n ${{env.acrreg}}
+      #     docker push $acrsite/$repo:${{github.run_number}}
 
       - name: create issue if build & test failed
         if: failure()
