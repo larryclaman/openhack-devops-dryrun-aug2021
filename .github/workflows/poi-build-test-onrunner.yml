@@ -79,8 +79,10 @@ jobs:
   #      working-directory: tests/UnitTests
   #      run: dotnet add package coverlet.msbuild
       - name: add junit logger
-        run: dotnet add package JunitXml.TestLogger --version 3.0.98
-        working-directory: tests/UnitTests
+        run: |
+          pwd
+          dotnet add package JunitXml.TestLogger --version 3.0.98
+        working-directory: apis/poi/tests/UnitTests
 
       - name: Install dependencies
         run: dotnet restore web/*.csproj
@@ -101,7 +103,7 @@ jobs:
         uses: EnricoMi/publish-unit-test-result-action@v1
         # if: always()
         with:
-          files: api/poi/tests/UnitTests/junittest-results.xml
+          files: apis/poi/tests/UnitTests/junittest-result.xml
 
       - name: .NET Publish
         run: dotnet publish -c Release --no-restore web/poi.csproj -o poiapp
