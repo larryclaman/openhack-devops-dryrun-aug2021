@@ -78,6 +78,12 @@ jobs:
   #    - name: Add Code Coverage Tools
   #      working-directory: tests/UnitTests
   #      run: dotnet add package coverlet.msbuild
+      - name: add junit logger
+        run: |
+          pwd
+          dotnet add package JunitXml.TestLogger --version 3.0.98
+        working-directory: apis/poi/tests/UnitTests
+
       - name: Install dependencies
         run: dotnet restore web/*.csproj
 
@@ -89,19 +95,25 @@ jobs:
 
       - name: .NET Test
         run: |
-          dotnet test --no-restore --verbosity normal tests/UnitTests --logger:console
-           #   /p:CollectCoverage=true /p:CoverletOutput=lcov/ /p:CoverletOutputFormat=lcov \
-           #   --logger:trx
+          dotnet test --no-restore --verbosity normal tests/UnitTests  --logger:"junit;LogFilePath=junittest-result.xml"
+          # the above will create a file in the same dir as the csproj file, eg tests/UnitTests
+
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1
+        # if: always()
+        with:
+          files: apis/poi/tests/UnitTests/junittest-result.xml
 
       - name: .NET Publish
         run: dotnet publish -c Release --no-restore web/poi.csproj -o poiapp
 
-      - run: |
-          pwd
-          echo
-          ls -l
-          echo
-          ls -l poiapp
+      # - run: |
+      #     pwd
+      #     echo
+      #     ls -l
+      #     echo
+      #     ls -l poiapp
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v2
