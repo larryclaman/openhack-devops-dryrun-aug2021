@@ -188,7 +188,9 @@ jobs:
         build-args: |
           build_version=${{github.run_number}}
         base-image: mcr.microsoft.com/dotnet/aspnet:2.1
-        entrypoint: '"dotnet", "poi.dll"'
+        entrypoint: |
+          'dotnet'
+          'poi.dll'
         envs: |
           SQL_USER="YourUserName"
           SQL_PASSWORD="changeme"
