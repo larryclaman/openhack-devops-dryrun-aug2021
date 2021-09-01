@@ -3,15 +3,15 @@ name: Poi-Build-Runner
 env:
   apiname: poi
   repo: devopsoh/api-poi
-  acrreg: openhack67r2z5h4acr
-  acrsite: openhack67r2z5h4acr.azurecr.io
+  acrreg: openhacklnc01aacr
+  acrsite: openhacklnc01aacr.azurecr.io
   tenant: ${{ secrets.tenant }}
-  AZURE_WEBAPP_NAME: openhack67r2z5h4poi   # set this to your application's name
+  AZURE_WEBAPP_NAME: openhacklnc01apoi   # set this to your application's name
   AZURE_WEBAPP_PACKAGE_PATH: '.' 
   artifact-name:  poiapp
   #dotnetversion:  '2.1.x'
   dotnetversion: '3.1.202' # use with revison
-  RG: openhack67r2z5h4rg
+  RG: openhacklnc01arg
 
 on:
   workflow_dispatch:
