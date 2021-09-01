@@ -199,6 +199,7 @@ jobs:
           WEB_PORT=8080
           WEB_SERVER_BASE_URI=http://0.0.0.0
           ASPNETCORE_ENVIRONMENT=Production
+          APP_VERSION=${{github.run_number}}
         content: |
           poiapp
 
