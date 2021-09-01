@@ -196,7 +196,7 @@ jobs:
           WEB_SERVER_BASE_URI="http://0.0.0.0"
           ASPNETCORE_ENVIRONMENT="Production"
         content: |
-          poiapp /app
+          poiapp /app/
 
 
 
