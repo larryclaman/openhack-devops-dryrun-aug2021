@@ -187,7 +187,7 @@ jobs:
         #workdir: /app/
         build-args: |
           build_version=${{github.run_number}}
-        base-image: mcr.microsoft.com/dotnet/aspnet:2.1
+        base-image: mcr.microsoft.com/dotnet/aspnet:3.1
         entrypoint: |
           dotnet
           poi.dll
