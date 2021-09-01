@@ -143,39 +143,67 @@ jobs:
         name: ${{ env.artifact-name}}
         path: poiapp 
 
-    - name: Create Dockerfile
-      run: |
-        cat >Dockerfile <<EOF
-        FROM mcr.microsoft.com/dotnet/aspnet:2.1 
-        WORKDIR /app
 
-        ENV SQL_USER="YourUserName" \
-        SQL_PASSWORD="changeme" \
-        SQL_SERVER="changeme.database.windows.net" \
-        SQL_DBNAME="mydrivingDB" \
-        WEB_PORT="8080" \
-        WEB_SERVER_BASE_URI="http://0.0.0.0" \
-        ASPNETCORE_ENVIRONMENT="Production"
 
-        COPY poiapp .
+    # - name: Create Dockerfile
+    #   run: |
+    #     cat >Dockerfile <<EOF
+    #     FROM mcr.microsoft.com/dotnet/aspnet:2.1 
+    #     WORKDIR /app
 
-        ENTRYPOINT ["dotnet", "poi.dll"]
-        EOF
+    #     ENV SQL_USER="YourUserName" \
+    #     SQL_PASSWORD="changeme" \
+    #     SQL_SERVER="changeme.database.windows.net" \
+    #     SQL_DBNAME="mydrivingDB" \
+    #     WEB_PORT="8080" \
+    #     WEB_SERVER_BASE_URI="http://0.0.0.0" \
+    #     ASPNETCORE_ENVIRONMENT="Production"
 
-    - name: Build docker image using artifact
-      run: |
-        docker build -t $acrsite/$repo:${{github.run_number}} --build-arg build_version=${{github.run_number}} .
-        docker images
+    #     COPY poiapp .
+
+    #     ENTRYPOINT ["dotnet", "poi.dll"]
+    #     EOF
+
+    # - name: Build docker image using artifact
+    #   run: |
+    #     docker build -t $acrsite/$repo:${{github.run_number}} --build-arg build_version=${{github.run_number}} .
+    #     docker images
+
 
     - uses: azure/login@v1
       name: Azure Login
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }} 
 
+    # Build container image without Dockerfile!
+    - name: Build container image using Buildah 
+      uses: redhat-actions/buildah-build@v2
+      with:
+        image:  ${{env.acrsite}}/${{env.repo}}
+        tags: ${{github.run_number}} ${{ github.sha }}
+        build-args: |
+          build_version=${{github.run_number}}
+        base-image: mcr.microsoft.com/dotnet/aspnet:2.1
+        entrypoint: |
+          dotnet
+          poi.dll
+        env: |
+          SQL_USER="YourUserName"
+          SQL_PASSWORD="changeme"
+          SQL_SERVER="changeme.database.windows.net"
+          SQL_DBNAME="mydrivingDB"
+          WEB_PORT="8080"
+          WEB_SERVER_BASE_URI="http://0.0.0.0"
+          ASPNETCORE_ENVIRONMENT="Production"
+        content: |
+          poiapp /app
+
+
+
     - name: Push image to registry
       run: |
         az acr login -n ${{env.acrreg}}
-        docker push $acrsite/$repo:${{github.run_number}}
+        buildah push $acrsite/$repo:${{github.run_number}}
 
   DeploytoStaging:
     if: github.ref == 'refs/heads/master'
