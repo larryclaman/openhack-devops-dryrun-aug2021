@@ -181,6 +181,7 @@ jobs:
       with:
         image:  ${{env.acrsite}}/${{env.repo}}
         tags: ${{github.run_number}} ${{ github.sha }}
+        workdir: /app
         build-args: |
           build_version=${{github.run_number}}
         base-image: mcr.microsoft.com/dotnet/aspnet:2.1
@@ -196,9 +197,11 @@ jobs:
           WEB_SERVER_BASE_URI="http://0.0.0.0"
           ASPNETCORE_ENVIRONMENT="Production"
         content: |
-          poiapp /app/
+          poiapp .
 
-
+    - run: |
+        buildah images
+        # buildah copy $acrsite/$repo:${{github.run_number}} poiapp /app
 
     - name: Push image to registry
       run: |
