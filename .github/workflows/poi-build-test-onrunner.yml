@@ -175,6 +175,9 @@ jobs:
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }} 
 
+
+
+    - run: ls -l
     # Build container image without Dockerfile!
     - name: Build container image using Buildah 
       uses: redhat-actions/buildah-build@v2
@@ -197,7 +200,7 @@ jobs:
           WEB_SERVER_BASE_URI="http://0.0.0.0"
           ASPNETCORE_ENVIRONMENT="Production"
         content: |
-          poiapp .
+          poiapp 
 
     - run: |
         buildah images
