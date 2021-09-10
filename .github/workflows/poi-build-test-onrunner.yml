@@ -170,10 +170,10 @@ jobs:
     #     docker images
 
 
-    - uses: azure/login@v1
-      name: Azure Login
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }} 
+#    - uses: azure/login@v1
+#      name: Azure Login
+#      with:
+#        creds: ${{ secrets.AZURE_CREDENTIALS }} 
 
 
 
@@ -205,12 +205,12 @@ jobs:
 
     - run: |
         buildah images
-        # buildah copy $acrsite/$repo:${{github.run_number}} poiapp /app
-
+        buildah copy $acrsite/$repo:${{github.run_number}} poiapp /app
+#
     - name: Push image to registry
       run: |
-        az acr login -n ${{env.acrreg}}
-        buildah push $acrsite/$repo:${{github.run_number}}
+        #az acr login -n ${{env.acrreg}}
+         buildah push $acrsite/$repo:${{github.run_number}}
 
   DeploytoStaging:
     if: github.ref == 'refs/heads/master'
