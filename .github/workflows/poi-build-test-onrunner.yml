@@ -167,6 +167,20 @@ jobs:
         docker build -t $acrsite/$repo:${{github.run_number}} --build-arg build_version=${{github.run_number}} .
         docker images
 
+    - uses: Azure/container-scan@v0 
+      name: Scan image for vulnerabilities
+      id: container-scan
+      continue-on-error: true
+      with:
+        image-name: $acrsite/$repo:${{github.run_number}}
+
+    - name: Post container scan logs to appinsights
+      uses: Azure/publish-security-assessments@v0
+      with: 
+        scan-results-path: ${{ steps.container-scan.outputs.scan-report-path }}
+        connection-string: ${{ secrets.ASC_CONNECTION_STRING }}
+        subscription-token: ${{ secrets.ASC_TOKEN }} 
+
     - uses: azure/login@v1
       name: Azure Login
       with:
