@@ -1,0 +1,50 @@
+name:  sample scan
+
+env:
+  apiname: poi
+  repo: devopsoh/api-poi
+  acrreg: openhack67r2z5h4acr
+  acrsite: openhack67r2z5h4acr.azurecr.io
+  tenant: ${{ secrets.tenant }}
+  AZURE_WEBAPP_NAME: openhack67r2z5h4poi   # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: '.' 
+  artifact-name:  poiapp
+  #dotnetversion:  '2.1.x'
+  dotnetversion: '3.1.202' # use with revison
+  RG: openhack67r2z5h4rg
+
+on: [push workflow_dispatch]
+
+jobs:
+  build-secure-and-push:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+
+    - run: docker build . -t contoso.azurecr.io/k8sdemo:${{ github.sha }}
+      
+    - name: Scan container image for vulnerabilities
+      id: container_scan
+      uses: Azure/container-scan@v0
+      with:
+        image-name: ${{env.acrsite}}/k8sdemo:${{ github.sha }}
+
+    - name: Publish container scan results to ASC
+      uses: azure/publish-security-assessments@v0
+      with:
+        connection-string: ${{ secrets.ASC_CONNECTION_STRING }}
+        subscription-token: ${{ secrets.ASC_AUTH_TOKEN }} 
+        scan-results-path: ${{ steps.container_scan.outputs.scan-report-path }}
+    
+    - uses: azure/login@v1
+      name: Azure Login
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }} 
+    
+    - name: Push image to registry
+      run: |
+        az acr login -n ${{env.acrreg}}
+        docker push ${{env.acrsite}}/k8sdemo:${{ github.sha }}
+    
+
+    
