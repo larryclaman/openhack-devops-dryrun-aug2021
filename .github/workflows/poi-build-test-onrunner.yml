@@ -174,12 +174,7 @@ jobs:
       with:
         image-name: ${{env.acrsite}}/${{env.repo}}:${{github.run_number}}
 
-    - name: Post container scan logs to appinsights
-      uses: Azure/publish-security-assessments@v0
-      with: 
-        scan-results-path: ${{ steps.container-scan.outputs.scan-report-path }}
-        connection-string: ${{ secrets.ASC_CONNECTION_STRING }}
-        subscription-token: ${{ secrets.ASC_AUTH_TOKEN }} 
+
 
     - uses: azure/login@v1
       name: Azure Login
@@ -190,6 +185,14 @@ jobs:
       run: |
         az acr login -n ${{env.acrreg}}
         docker push $acrsite/$repo:${{github.run_number}}
+
+    - name: Post container scan logs to appinsights
+      uses: Azure/publish-security-assessments@v0
+      with: 
+        scan-results-path: ${{ steps.container-scan.outputs.scan-report-path }}
+        connection-string: ${{ secrets.ASC_CONNECTION_STRING }}
+        subscription-token: ${{ secrets.ASC_AUTH_TOKEN }} 
+
 
   DeploytoStaging:
     if: github.ref == 'refs/heads/master'
