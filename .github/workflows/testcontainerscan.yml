@@ -13,7 +13,9 @@ env:
   dotnetversion: '3.1.202' # use with revison
   RG: openhack67r2z5h4rg
 
-on: [push workflow_dispatch]
+on: 
+  push:
+  workflow_dispatch:
 
 jobs:
   build-secure-and-push:
