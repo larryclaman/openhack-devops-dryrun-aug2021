@@ -172,7 +172,7 @@ jobs:
       id: container-scan
       continue-on-error: true
       with:
-        image-name: $acrsite/$repo:${{github.run_number}}
+        image-name: ${{env.acrsite}}/${{env.repo}}:${{github.run_number}}
 
     - name: Post container scan logs to appinsights
       uses: Azure/publish-security-assessments@v0
