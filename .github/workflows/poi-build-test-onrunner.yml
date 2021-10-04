@@ -179,7 +179,7 @@ jobs:
       with: 
         scan-results-path: ${{ steps.container-scan.outputs.scan-report-path }}
         connection-string: ${{ secrets.ASC_CONNECTION_STRING }}
-        subscription-token: ${{ secrets.ASC_TOKEN }} 
+        subscription-token: ${{ secrets.ASC_AUTH_TOKEN }} 
 
     - uses: azure/login@v1
       name: Azure Login
